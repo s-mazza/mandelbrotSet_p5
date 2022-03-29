@@ -4,6 +4,7 @@ https://bit.ly/3Ntjh9X
 https://bit.ly/3tNQ0Py
 https://youtu.be/6z7GQewK-Ks video explanation
 https://en.wikipedia.org/wiki/Plotting_algorithms_for_the_Mandelbrot_set
+https://thecodingtrain.com/CodingChallenges/021-mandelbrot-p5.html
 */
 
 var maxVal = 1
@@ -11,8 +12,8 @@ var minVal = -1
 var maxSlider, minSlider;
 
 function setup() {
-  createCanvas(min(windowWidth, windowHeight), min(windowWidth, windowHeight));
-
+  createCanvas(parseInt(min(windowWidth, windowHeight) / 1), parseInt(min(windowWidth, windowHeight) / 1));
+  rotate(PI / 2);
   pixelDensity(1);
   maxSlider = createSlider(0, maxVal,maxVal, 0.01);
   minSlider = createSlider(minVal, 0, minVal, 0.01);
@@ -20,18 +21,21 @@ function setup() {
 
 function draw() {
   loadPixels();
+  rotate(PI / 2);
   
-  var maxiterations = 100, toinf = 2;
+  var maxiterations = 300, toinf = 2;
 
+  var mincolor = parseInt(random(0, 0xffffff));
 
+  var maxcolor = parseInt(random(0, 0xffffff));
   //a + bi complex number
   //cycle trough every couple of real and imaginary part of a complex number representable in the canvas as coordinates, mapped from -2 to 2
   for(var x = 0; x < width; x++)
   {
     for(var y = 0; y < height; y++)
     {
-      var a = map(x, 0, width, minSlider.value(), maxSlider.value());
-      var b = map(y, 0, height, minSlider.value(), maxSlider.value());
+      var a = map(x, 0, width, minVal, maxVal);
+      var b = map(y, 0, height, minVal, maxVal);
 
       var ca = a;//original c
       var cb = b;
@@ -50,13 +54,17 @@ function draw() {
         }
       }
       
+
+      //console.log(maxcolor);
+      var colore = parseInt(map(n, 0, maxiterations, mincolor, maxcolor));
       
-      var r = map(n, 0, maxiterations, 0, 255);
-      var g = map(n, 0, maxiterations, 0, 0);
-      var b = map(n, 0, maxiterations, 0, 0);
+      var r = (colore & 0xff0000) >> 16;
+      var g = (colore & 0x00ff00) >> 8;
+      var b = colore & 0x0000ff;
+
       if(n == maxiterations)
       {
-        r = 0; g = 0; b = 0;
+        r = 0; g = 0; b = 0; 
       }
 
       var pix = (x + y * width) * 4;
@@ -67,10 +75,10 @@ function draw() {
     }
   }
 
-
   updatePixels();
-  noLoop();
-  //wait(50);
+
+  //noLoop();
+  //wait(100);
 }
 
 function wait(time)
